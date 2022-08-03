@@ -1,0 +1,470 @@
+import java.util.*;
+import java.util.Scanner;
+public class Main
+{
+  public static void FCFS ()
+  {
+    Scanner myScan = new Scanner (System.in);
+      System.out.println ("========================================");
+      System.out.println ("|FCFS - CPU SCHEDULING SYSTEM [PROGRAM]|");
+      System.out.println ("========================================");
+
+    int myProcess;
+
+      System.out.print ("Input number of processes: ");
+      myProcess = myScan.nextInt ();
+
+    //Declaring arrays
+    int[] pID = new int[myProcess];	// process Id 
+    int[] comT = new int[myProcess];	// arrival time      
+    int[] arrT = new int[myProcess];	//completion time
+    int[] tarT = new int[myProcess];	//turn arround time
+    int[] burT = new int[myProcess];	// burst time
+    int[] waiT = new int[myProcess];	// waiting time
+
+    int temp;
+    float average_WT = 0, average_AR = 0;
+
+    //Getting arrival time and burst time
+    for (int a = 0; a < myProcess; a++)
+      {
+	System.out.println ("\nProcess " + "[" + (a + 1) + "]");
+
+	System.out.print ("Input arrival Time: ");
+	arrT[a] = myScan.nextInt ();
+
+	System.out.print ("Input burst Time: ");
+	burT[a] = myScan.nextInt ();
+
+	pID[a] = a + 1;
+      }
+
+    //sorting arrival time 
+    for (int b = 0; b < myProcess; b++)
+      {
+	for (int c = 0; c < myProcess - (c + 1); c++)
+	  {
+	    if (arrT[c] > arrT[c + 1])
+	      {
+		temp = arrT[c];
+		arrT[c] = arrT[c + 1];
+		arrT[c + 1] = temp;
+
+		temp = burT[c];
+		burT[c] = burT[c + 1];
+		burT[c + 1] = temp;
+
+		temp = pID[c];
+		pID[c] = pID[c + 1];
+		pID[c + 1] = temp;
+	      }
+	  }
+      }
+
+    // sorting burst time
+    for (int d = 0; d < myProcess; d++)
+      {
+	if (d == 0)
+	  {
+	    comT[d] = arrT[d] + burT[d];
+	  }
+	else
+	  {
+	    if (arrT[d] > comT[d - 1])
+	      {
+		comT[d] = arrT[d] + burT[d];
+	      }
+	    else
+	      {
+		comT[d] = comT[d - 1] + burT[d];
+	      }
+	    tarT[d] = comT[d] - arrT[d];
+	    waiT[d] = tarT[d] - burT[d];
+	    average_WT += waiT[d];
+	    average_AR += tarT[d];
+	  }
+      }
+    //Printing  results
+    System.out.println ("\n============================");
+    System.out.println ("PID \t AT \t BT \t WT");
+    for (int i = 0; i < myProcess; i++)
+      {
+	System.out.println ("P" + pID[i] + " \t "
+			    + tarT[i] + " \t " + waiT[i] + " \t " + burT[i]);
+      }
+    System.out.println ("============================");
+    System.out.println ("\nAverage waiting time: " +
+			(average_WT / myProcess));
+  }
+
+  /*========================================================================= */
+  public static void SJF_nP ()
+  {
+    Scanner myScan = new Scanner (System.in);
+    System.
+      out.println ("=======================================================");
+    System.
+      out.println ("|SJF (Non-Primitive) - CPU SCHEDULING SYSTEM [PROGRAM]|");
+    System.
+      out.println ("=======================================================");
+
+    int myInput, i, c, min;
+    boolean a = true;
+
+    System.out.print ("Input number of process: ");
+    myInput = myScan.nextInt ();
+
+    int[] pid = new int[myInput];	//process ID
+    int[] at = new int[myInput];	// arrival time
+    int[] bt = new int[myInput];	// burst time
+    int[] ct = new int[myInput];	// completion time
+    int[] ta = new int[myInput];	// turn arround time
+    int[] wt = new int[myInput];	// waiting time
+    int[] f = new int[myInput];	// flag
+    int st = 0, tot = 0;
+
+    float avgwt = 0, avgta = 0;
+
+    System.out.println (" ");
+
+    for (i = 0; i < myInput; i++)
+      {
+	System.out.println ("Process " + "[" + (i + 1) + "]");
+	System.out.print ("Arrival time: ");
+	at[i] = myScan.nextInt ();
+	System.out.print ("Burst time: ");
+	bt[i] = myScan.nextInt ();
+	System.out.println (" ");
+      }
+
+    while (true)
+      {
+	c = myInput;
+	min = 999;
+	if (tot == myInput)	//if total number of process is 
+	  break;		//eq to completed process loop will be terminated      
+	for (i = 0; i < myInput; i++)
+	  {
+	    if ((at[i] <= st) && (f[i] == 0) && (bt[i] < min))
+	      {
+		min = bt[i];
+		c = i;
+	      }
+	  }
+	  
+	if (c == myInput)
+	  {
+	    st++;
+	  }
+	else
+	  {
+	    ct[c] = st + bt[c];
+	    st += bt[c];
+	    ta[c] = ct[c] - at[c];
+	    wt[c] = ta[c] - bt[c];
+	    f[c] = 1;
+	    tot++;
+	  }
+      }
+    System.out.println ("\n============================");
+    System.out.println ("PID \t AT \t BT \t WT");
+    for (i = 0; i < myInput; i++)
+      {
+	avgwt += wt[i];
+	avgta += ta[i];
+	System.out.println (pid[i] + "\t " + at[i] + "\t " + bt[i] + "\t " +
+			    wt[i]);
+      }
+    System.out.println ("============================");
+    System.out.println ("\nAverage Waiting Time: " + (avgwt / myInput));
+  }
+
+  public static void SJF_P ()
+  {
+    Scanner myScan = new Scanner (System.in);
+    System.
+      out.println ("=======================================================");
+    System.
+      out.println ("|SJF (Pre-Primitive) - CPU SCHEDULING SYSTEM [PROGRAM]|");
+    System.
+      out.println ("=======================================================");
+
+    int numP;
+
+    System.out.print ("Input number of process: ");
+    numP = myScan.nextInt ();
+
+    int pid[] = new int[numP];	// process id
+    int at[] = new int[numP];	// arrival time
+    int bt[] = new int[numP];	// burst time
+    int ct[] = new int[numP];	// complete time
+    int ta[] = new int[numP];	// turn around time
+    int wt[] = new int[numP];	// waiting time
+    int f[] = new int[numP];	// flag, checks process is completed or not
+    int k[] = new int[numP];	// stores brust time
+    int i, st = 0, tot = 0;
+    float avgwt = 0, avgta = 0;
+
+
+    for (i = 0; i < numP; i++)
+      {
+
+	System.out.print ("\nProcess " + (i + 1));
+	pid[i] = i + 1;
+	System.out.print ("\nInput arrival time: ");
+	at[i] = myScan.nextInt ();
+	System.out.print ("Input burst time: ");
+	bt[i] = myScan.nextInt ();
+	k[i] = bt[i];
+	f[i] = 0;
+      }
+      
+    while (true)
+      {
+	int min = 99, c = numP;
+	if (tot == numP)
+	  break;
+
+	for (i = 0; i < numP; i++)
+	  {
+	    if ((at[i] <= st) && (f[i] == 0) && (bt[i] < min))
+	      {
+		min = bt[i];
+		c = i;
+	      }
+	  }
+
+	if (c == numP)
+	  st++;
+	else
+	  {
+	    bt[c]--;
+	    st++;
+	    if (bt[c] == 0)
+	      {
+		ct[c] = st;
+		f[c] = 1;
+		tot++;
+	      }
+	  }
+      }
+
+    for (i = 0; i < numP; i++)
+      {
+	ta[i] = ct[i] - at[i];
+	wt[i] = ta[i] - k[i];
+	avgwt += wt[i];
+	avgta += ta[i];
+      }
+
+    System.out.println ("\n============================");
+    System.out.println ("pid \t AT \t BT \t WT");
+    for (i = 0; i < numP; i++)
+      {
+	System.out.println ("P" + pid[i] + " \t "
+			    + at[i] + " \t " + k[i] + " \t " + wt[i]);
+      }
+    System.out.println ("============================");
+    System.out.println ("\naverage waiting time: " + (float) (avgwt / numP));
+  }
+
+  /*========================================================================= */
+  public static void PRIO_BS ()
+  {
+    Scanner myScan = new Scanner (System.in);
+    System.out.println ("============================================");
+    System.out.println ("|Priority - CPU SCHEDULING SYSTEM [PROGRAM]|");
+    System.out.println ("============================================");
+
+    int x, n, p[], pp[], bt[], w[], t[], awt, atat, i;
+
+    System.out.print ("\nEnter the number of process : ");
+    n = myScan.nextInt ();
+
+    p = new int[n];
+    pp = new int[n];
+    bt = new int[n];
+    w = new int[n];
+    t = new int[n];
+
+    for (i = 0; i < n; i++)
+      {
+	System.out.print ("\nProcess[" + (i + 1) + "]:");
+	System.out.print ("\nInput burst time: ");
+	bt[i] = myScan.nextInt ();
+	System.out.print ("Input time priorities: ");
+	pp[i] = myScan.nextInt ();
+	p[i] = i + 1;
+      }
+
+    for (i = 0; i < n - 1; i++)
+      {
+	for (int j = i + 1; j < n; j++)
+	  {
+	    if (pp[i] > pp[j])
+	      {
+		x = pp[i];
+		pp[i] = pp[j];
+		pp[j] = x;
+		x = bt[i];
+		bt[i] = bt[j];
+		bt[j] = x;
+		x = p[i];
+		p[i] = p[j];
+		p[j] = x;
+	      }
+	  }
+      }
+    w[0] = 0;
+    awt = 0;
+    t[0] = bt[0];
+    atat = t[0];
+    for (i = 1; i < n; i++)
+      {
+	w[i] = t[i - 1];
+	awt += w[i];
+	t[i] = w[i] + bt[i];
+	atat += t[i];
+      }
+    System.out.println ("============================");
+    System.out.println ("pID \t P \t BT \t WT");
+    for (i = 0; i < n; i++)
+      System.out.println ("P" + p[i] + " \t " + pp[i] + " \t " + bt[i] +
+			  " \t " + w[i]);
+    awt /= n;
+    atat /= n;
+    System.out.println ("============================");
+    System.out.println ("Average Wait Time : " + awt);
+  }
+
+  /*========================================================================= */
+  public static void RRobin ()
+  {
+    Scanner myScan = new Scanner (System.in);
+    System.out.println ("===============================================");
+    System.out.println ("|Round Robin - CPU SCHEDULING SYSTEM [PROGRAM]|");
+    System.out.println ("===============================================");
+    
+    int n, i, j, k, q, sum=0;
+    
+    System.out.print("Input number of process: ");
+    n = myScan.nextInt();
+    
+    int[] bt = new int[n];
+    int[] wt = new int[n];
+    int[] tat = new int[n];
+    int[] a = new int[n];
+
+    for(i = 0; i < n; i++){
+        System.out.print("\nProcess " + (i + 1) + " Input burst time: ");
+        bt[i] = myScan.nextInt();
+    }
+    System.out.print("Input time quantum: ");
+    q = myScan.nextInt();
+    
+    for(i=0;i<n;i++)
+			a[i]=bt[i];
+		for(i=0;i<n;i++)
+			wt[i]=0;
+		do{
+		for(i=0;i<n;i++){
+			if(bt[i]>q){
+				bt[i]-=q;
+				for(j=0;j<n;j++){
+					if((j!=i)&&(bt[j]!=0))
+					wt[j]+=q;
+				}
+			}
+			else{
+				for(j=0;j<n;j++){
+					if((j!=i)&&(bt[j]!=0))
+					wt[j]+=bt[i];
+				}
+				bt[i]=0;
+			}
+		}
+		sum=0;
+		for(k=0;k<n;k++)
+			sum=sum+bt[k];
+		}
+		while(sum!=0);
+		for(i=0;i<n;i++)
+			tat[i]=wt[i]+a[i];
+		System.out.println ("\n=============================");
+		System.out.println("pID \t BT \t WT \t TAT");
+		for(i=0;i<n;i++){
+			System.out.println("P" + (i+1) + " \t " 
+			                    + a[i] + " \t " 
+			                    + wt[i] + " \t " 
+			                    + tat[i]);
+		}
+		float avg_wt=0;
+		float avg_tat=0;
+		for(j=0;j<n;j++){
+			avg_wt+=wt[j];
+		}
+		for(j=0;j<n;j++){
+			avg_tat+=tat[j];
+		}
+		System.out.println ("=============================");
+		System.out.println("\naverage waiting time " + (avg_wt/n));
+  }
+
+  /*========================================================================= */
+  public static void main (String[]args)
+  {
+    Scanner myScan = new Scanner (System.in);
+    char myChoice;
+    int ch_inpt;
+
+    System.out.println ("===================================");
+    System.out.println ("| CPU SCHEDULING SYSTEM - Porgram | ");
+    System.out.println ("===================================");
+
+    try
+    {
+      do
+	{//menu
+	  System.out.println ("\nChoose From the List");
+	  System.out.println ("Press [1] - FCFS"
+			      + "\nPress [2] - SJF [non primitive]"
+			      + "\nPress [3] - SJF [primitive]"
+			      + "\nPress [4] - Priority Scheduling"
+			      + "\nPress [5] - Round Robin");
+
+	  System.out.print ("\nInput your Choice: ");
+	  ch_inpt = myScan.nextInt ();
+
+	  switch (ch_inpt)
+	    {
+	    case 1:
+	      FCFS ();
+	      break;
+	    case 2:
+	      SJF_nP ();
+	      break;
+	    case 3:
+	      SJF_P ();
+	      break;
+	    case 4:
+	      PRIO_BS ();
+	      break;
+	    case 5:
+	      RRobin ();
+	      break;
+	    default:
+	      System.out.println ("Error input not in choices!");
+	      break;
+	    }
+	  System.out.print ("\nDo another system testing? Y/N: ");
+	  myChoice = myScan.next ().charAt (0);
+	}
+      while (myChoice == 'Y' | myChoice == 'y');
+      System.out.println ("CPU System, Testing Done!");
+    }
+    catch (Exception e)
+    {
+      System.out.println ("Input Error!, Numbers only!");
+    }
+  }
+}
